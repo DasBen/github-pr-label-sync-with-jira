@@ -10,7 +10,7 @@ async function getJiraLabels(jiraTicket) {
     core.debug(`Fetching JIRA ticket ${jiraTicket} labels from ${jiraApiUrl}`);
 
     const response = await axios.get(
-        `${jiraApiUrl}/rest/api/2/issue/${jiraTicket}`,
+        `${jiraApiUrl}issue/${jiraTicket}`,
         {
             headers: {
                 Authorization: `Basic ${jiraAuthTokenBase64}`,

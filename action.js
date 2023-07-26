@@ -1,11 +1,13 @@
 // action.js
 const core = require('@actions/core');
-const { getOctokit, context } = require('@actions/github');
+const {getOctokit, context} = require('@actions/github');
 const axios = require('axios');
 
 async function getJiraLabels(jiraTicket) {
     const jiraApiUrl = core.getInput('jira-api-url');
     const jiraAuthTokenBase64 = core.getInput('jira-auth-token');
+
+    core.debug(`Fetching JIRA ticket ${jiraTicket} labels from ${jiraApiUrl}`);
 
     const response = await axios.get(
         `${jiraApiUrl}/rest/api/2/issue/${jiraTicket}`,
@@ -31,6 +33,9 @@ async function run() {
         const githubLabel = core.getInput('github-label');
         const jiraLabel = core.getInput('jira-label');
 
+        core.debug(`GitHub Labels: ${githubLabel}`);
+        core.debug(`JIRA Labels: ${jiraLabel}`);
+
         const githubLabels = githubLabel.split(',').map(label => label.trim());
         const jiraLabels = jiraLabel.split(',').map(label => label.trim());
 
@@ -38,7 +43,11 @@ async function run() {
             throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
         }
 
+        core.debug(`GitHub Labels (Parsed): ${githubLabels}`);
+        core.debug(`JIRA Labels (Parsed): ${jiraLabels}`);
+
         const octokit = getOctokit(githubToken);
+
         // Get the owner and repo from the context
         const owner = context.repo.owner;
         const repo = context.repo.repo;
@@ -46,8 +55,10 @@ async function run() {
         core.debug(`Owner: ${owner}, Repo: ${repo}, Pull Request Number ${prNumber}`);
 
         // Get the labels of the current pull request
-        const pullRequest = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
+        const pullRequest = await octokit.rest.pulls.get({owner, repo, pull_number: prNumber});
         const prLabels = pullRequest.data.labels.map((label) => label.name);
+
+        core.debug(`Current Pull Request Labels: ${prLabels}`);
 
         // Read all commits of the pull request and look for JIRA Tickets in the commit messages
         const commits = await octokit.rest.pulls.listCommits({
@@ -66,26 +77,44 @@ async function run() {
             }
         });
 
+        core.debug(`JIRA Tickets found in commits: ${[...jiraTickets]}`);
+
         // Fetch Jira labels for each Jira ticket and set GitHub labels accordingly
         for (let i = 0; i < githubLabels.length; i++) {
             const jiraLabel = jiraLabels[i];
             const githubLabel = githubLabels[i];
 
+            core.debug(`Checking for JIRA Ticket: ${jiraLabel}`);
+
             if (jiraTickets.has(jiraLabel)) {
+                core.debug(`JIRA Ticket ${jiraLabel} found. Fetching JIRA labels.`);
                 const jiraLabels = await getJiraLabels(jiraLabel);
+
+                core.debug(`JIRA Ticket Labels: ${jiraLabels}`);
+
                 if (jiraLabels.includes(jiraLabel)) {
+                    core.debug(`JIRA Ticket ${jiraLabel} matches GitHub Label ${githubLabel}`);
+
                     // Check if the GitHub label is already present on the pull request
                     const labelExists = prLabels.some(label => label.name === githubLabel);
 
                     if (!labelExists) {
+                        core.debug(`Adding GitHub Label: ${githubLabel}`);
+
                         // Set the GitHub label
                         await octokit.rest.issues.addLabels({
                             ...context.repo,
                             issue_number: prNumber,
                             labels: [githubLabel],
                         });
+                    } else {
+                        core.debug(`GitHub Label ${githubLabel} already exists on the pull request.`);
                     }
+                } else {
+                    core.debug(`JIRA Ticket ${jiraLabel} does not have a matching label.`);
                 }
+            } else {
+                core.debug(`JIRA Ticket ${jiraLabel} not found in commit messages.`);
             }
         }
     } catch (error) {

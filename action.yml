@@ -1,15 +1,18 @@
-name: 'Sync Jira Labels with GitHub PR Labels'
-description: 'Sync Jira Labels with GitHub PR Labels'
+name: 'Sync Jira Labels with GitHub PR Labels or GitHub Components'
+description: 'Sync Jira Labels with GitHub PR Labels or GitHub Components'
 inputs:
   github-token:
     description: 'GitHub token'
     required: true
   github-label:
     description: 'Comma-separated list of github labels to add'
-    required: true
+    required: false
   jira-label:
     description: 'Comma-separated list of jira labels to read'
     required: true
+  jira-components:
+    description: 'Comma-separated list of Jira components to read'
+    required: false
   jira-api-url:
     description: 'The base URL of your JIRA API endpoint. Set this as a secret in your repository. The Url must end on rest/api/2/'
     required: true

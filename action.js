@@ -11,8 +11,7 @@ async function getJiraLabels(jiraTicket) {
     core.debug(`Fetching JIRA Ticket Labels from '${jiraApiUrl}issue/${jiraTicket}'`);
 
     const response = await axios.get(
-        // `${jiraApiUrl}issue/${jiraTicket}`,
-        `https://freenet-group.atlassian.net/rest/api/2/issue/${jiraTicket}`,
+        `${jiraApiUrl}issue/${jiraTicket}`,
         {
             headers: {
                 Authorization: `Basic ${jiraAuthTokenBase64}`,
@@ -33,20 +32,33 @@ async function run() {
     try {
         const githubToken = core.getInput('github-token');
         const githubLabel = core.getInput('github-label');
+        const jiraComponents = core.getInput('jira-components');
         const jiraLabel = core.getInput('jira-label');
+
+        // Check if either jira-label or jira-components is provided
+        if (!jiraLabel && !jiraComponents) {
+            throw new Error('Either jira-label or jira-components must be provided.');
+        }
 
         core.debug(`GitHub Labels: ${githubLabel}`);
         core.debug(`JIRA Labels: ${jiraLabel}`);
+        core.debug(`JIRA Components: ${jiraComponents}`);
 
         const githubLabels = githubLabel.split(',').map(label => label.trim());
         const jiraLabels = jiraLabel.split(',').map(label => label.trim());
+        const jiraComponentsList = jiraComponents !== '' ? jiraComponents.split(',').map(component => component.trim()) : [];
 
-        if (githubLabels.length !== jiraLabels.length) {
+        if (jiraLabel !== '' && (githubLabel.length !== jiraLabel.length)) {
             throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
+        }
+
+        if (jiraComponents !== '' && (githubLabel.length !== jiraComponents.length)) {
+            throw new Error('GitHub labels and JIRA components must have the same number of elements.');
         }
 
         core.debug(`GitHub Labels (Parsed): '${githubLabels}'`);
         core.debug(`JIRA Labels (Parsed): '${jiraLabels}'`);
+        core.debug(`JIRA Components (Parsed): '${jiraComponentsList}'`);
 
         const octokit = getOctokit(githubToken);
 
@@ -81,7 +93,7 @@ async function run() {
 
         core.debug(`JIRA Tickets found in commits: ${[...jiraTickets]}`);
 
-        // Fetch Jira labels for each Jira ticket and set GitHub labels accordingly
+        // Check each Jira Ticket for Labels or Components and add GitHub Label
         for (const jiraTicket of jiraTickets) {
             core.debug(`Checking JIRA Ticket: ${jiraTicket}`);
 
@@ -89,10 +101,13 @@ async function run() {
             const jiraTicketLabels = await getJiraLabels(jiraTicket);
             core.debug(`JIRA Ticket Labels: ${jiraTicketLabels}`);
 
+            // Check Jira Labels
+            core.debug(`Checking JIRA Ticket vs Labels: ${jiraTicket}`);
             for (let i = 0; i < jiraLabels.length; i++) {
                 const jiraLabel = jiraLabels[i];
                 const githubLabel = githubLabels[i];
 
+                // If Label is found from Input List
                 if (jiraTicketLabels.includes(jiraLabel)) {
                     core.debug(`JIRA Ticket ${jiraTicket} has label ${jiraLabel}. Matching GitHub Label: ${githubLabel}`);
 
@@ -113,6 +128,34 @@ async function run() {
                     }
                 } else {
                     core.debug(`JIRA Ticket ${jiraTicket} does not have a matching label ${jiraLabel} in JIRA.`);
+                }
+            }
+
+            // Check Jira Components
+            core.debug(`Checking JIRA Ticket vs Components: ${jiraTicket}`);
+            for (let i = 0; i < jiraLabels.length; i++) {
+                const jiraComponent = jiraLabels[i];
+                const githubLabel = githubLabels[i];
+                if (jiraTicketLabels.includes(jiraComponent)) {
+                    core.debug(`JIRA Ticket ${jiraTicket} has component ${jiraComponent}.`);
+
+                    // Check if the GitHub component is already present on the pull request
+                    const componentExists = prLabels.includes(jiraComponent);
+
+                    if (!componentExists) {
+                        core.debug(`Adding GitHub Component: ${githubLabel}`);
+
+                        // Set the GitHub component
+                        await octokit.rest.issues.addLabels({
+                            ...context.repo,
+                            issue_number: prNumber,
+                            labels: [githubLabel],
+                        });
+                    } else {
+                        core.debug(`GitHub Label ${githubLabel} already exists on the pull request.`);
+                    }
+                } else {
+                    core.debug(`JIRA Ticket ${jiraTicket} does not have a matching component ${jiraComponent} in JIRA.`);
                 }
             }
         }

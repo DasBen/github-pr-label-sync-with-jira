@@ -80,41 +80,35 @@ async function run() {
         core.debug(`JIRA Tickets found in commits: ${[...jiraTickets]}`);
 
         // Fetch Jira labels for each Jira ticket and set GitHub labels accordingly
-        for (let i = 0; i < githubLabels.length; i++) {
+        for (let i = 0; i < jiraLabels.length; i++) {
             const jiraLabel = jiraLabels[i];
             const githubLabel = githubLabels[i];
 
-            core.debug(`Checking for JIRA Ticket: ${jiraLabel}`);
+            core.debug(`Checking for JIRA Label: ${jiraLabel}`);
 
-            if (jiraTickets.has(jiraLabel)) {
-                core.debug(`JIRA Ticket ${jiraLabel} found. Fetching JIRA labels.`);
-                const jiraLabels = await getJiraLabels(jiraLabel);
+            // Fetch Jira labels for the current Jira ticket
+            const jiraLabelsFromJira = await getJiraLabels(jiraLabel);
 
-                core.debug(`JIRA Ticket Labels: ${jiraLabels}`);
+            if (jiraLabelsFromJira.includes(jiraLabel)) {
+                core.debug(`JIRA Label ${jiraLabel} found. Matching GitHub Label: ${githubLabel}`);
 
-                if (jiraLabels.includes(jiraLabel)) {
-                    core.debug(`JIRA Ticket ${jiraLabel} matches GitHub Label ${githubLabel}`);
+                // Check if the GitHub label is already present on the pull request
+                const labelExists = prLabels.includes(githubLabel);
 
-                    // Check if the GitHub label is already present on the pull request
-                    const labelExists = prLabels.some(label => label.name === githubLabel);
+                if (!labelExists) {
+                    core.debug(`Adding GitHub Label: ${githubLabel}`);
 
-                    if (!labelExists) {
-                        core.debug(`Adding GitHub Label: ${githubLabel}`);
-
-                        // Set the GitHub label
-                        await octokit.rest.issues.addLabels({
-                            ...context.repo,
-                            issue_number: prNumber,
-                            labels: [githubLabel],
-                        });
-                    } else {
-                        core.debug(`GitHub Label ${githubLabel} already exists on the pull request.`);
-                    }
+                    // Set the GitHub label
+                    await octokit.rest.issues.addLabels({
+                        ...context.repo,
+                        issue_number: prNumber,
+                        labels: [githubLabel],
+                    });
                 } else {
-                    core.debug(`JIRA Ticket ${jiraLabel} does not have a matching label.`);
+                    core.debug(`GitHub Label ${githubLabel} already exists on the pull request.`);
                 }
             } else {
-                core.debug(`JIRA Ticket ${jiraLabel} not found in commit messages.`);
+                core.debug(`JIRA Label ${jiraLabel} does not have a matching label in JIRA.`);
             }
         }
     } catch (error) {

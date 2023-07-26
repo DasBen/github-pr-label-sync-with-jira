@@ -36,7 +36,7 @@ async function run() {
         const jiraLabelsInput = core.getInput('jira-labels');
 
         // Check if either jira-label or jira-components is provided
-        if (!jiraLabelsInput || !jiraComponentsInput) {
+        if (!jiraLabelsInput && !jiraComponentsInput) {
             throw new Error('Either jira-labels or jira-components must be provided.');
         }
 

@@ -55,6 +55,8 @@ async function run() {
         core.debug(`GitHub Labels (Parsed): '${githubLabelList}'`);
         core.debug(`Jira Labels (Parsed): '${jiraLabelList}'`);
         core.debug(`Jira Components (Parsed): '${jiraComponentsList}'`);
+        core.debug(`GitHub Labels Length: '${githubLabelList.length}'`)
+        core.debug(`Jira Labels Length: '${jiraLabelList.length}'`)
 
         if (jiraLabelsInput !== '' || githubLabelList.length !== jiraLabelList.length) {
             throw new Error('GitHub Labels and Jira Labels must have the same number of elements.');

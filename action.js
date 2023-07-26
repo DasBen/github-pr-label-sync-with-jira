@@ -44,22 +44,21 @@ async function run() {
         core.debug(`JIRA Labels: ${jiraLabelsInput}`);
         core.debug(`JIRA Components: ${jiraComponentsInput}`);
 
-        if (githubLabelsInputs !== '' && (githubLabelsInputs.length !== jiraLabelsInput.length)) {
-            throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
-        }
-
-        if (jiraComponentsInput !== '' && (githubLabelsInputs.length !== jiraComponentsInput.length)) {
-            throw new Error('GitHub labels and JIRA components must have the same number of elements.');
-        }
-
         const githubLabels = githubLabelsInputs.split(',').map(label => label.trim());
         const jiraLabels = jiraLabelsInput.split(',').map(label => label.trim());
         const jiraComponentsList = jiraComponentsInput !== '' ? jiraComponentsInput.split(',').map(component => component.trim()) : [];
 
-
         core.debug(`GitHub Labels (Parsed): '${githubLabels}'`);
         core.debug(`JIRA Labels (Parsed): '${jiraLabels}'`);
         core.debug(`JIRA Components (Parsed): '${jiraComponentsList}'`);
+
+        if (githubLabelsInputs !== '' && (githubLabels.length !== jiraComponentsList.length)) {
+            throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
+        }
+
+        if (jiraComponentsInput !== '' && (githubLabels.length !== jiraComponentsList.length)) {
+            throw new Error('GitHub labels and JIRA components must have the same number of elements.');
+        }
 
         const octokit = getOctokit(githubTokenInput);
 

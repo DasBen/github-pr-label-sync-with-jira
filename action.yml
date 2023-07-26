@@ -4,10 +4,10 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
-  github-label:
+  github-labels:
     description: 'Comma-separated list of github labels to add'
     required: false
-  jira-label:
+  jira-labels:
     description: 'Comma-separated list of jira labels to read'
     required: true
   jira-components:

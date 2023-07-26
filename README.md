@@ -23,8 +23,8 @@ jobs:
       uses: DasBen/github-pr-label-sync-with-jira@<release-version>
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        github-label: label1, label2, label3
-        jira-label: jira-ticket1, jira-ticket2, jira-ticket3
+        github-labels: label1, label2, label3
+        jira-labels: jira-ticket1, jira-ticket2, jira-ticket3
         jira-components: component1, component2
         jira-api-endpoint: ${{ secrets.JIRA_API_ENDPOINT }}
         jira-auth-token: ${{ secrets.JIRA_AUTH_TOKEN_BASE64 }}
@@ -36,8 +36,8 @@ Make sure to replace your-username/your-repo-name with the actual repository nam
 | Input               | Description                                                                                                      | Required |
 |---------------------|------------------------------------------------------------------------------------------------------------------|----------|
 | `github-token`      | The GitHub token for authentication. This should be set to `${{ secrets.GITHUB_TOKEN }}`.                        | Yes      |
-| `github-label`      | Comma-separated list of GitHub labels to add.                                                                    | Yes      |
-| `jira-label`        | Comma-separated list of Jira labels to read.Either jira-label or jira-components must be set.                    | (Yes)    |
+| `github-labels`     | Comma-separated list of GitHub labels to add.                                                                    | Yes      |
+| `jira-labels`       | Comma-separated list of Jira labels to read.Either jira-label or jira-components must be set.                    | (Yes)    |
 | `jira-components`   | Comma-separated list of GitHub components to check. Either jira-label or jira-components must be set.            | (Yes)    |
 | `jira-api-endpoint` | The base URL of your JIRA API endpoint. Set this as a secret in your repository. The Url must end on rest/api/2/ | Yes      |
 | `jira-auth-token`   | JIRA authentication token Pair with username:token. Set this as a secret in your repository.                     | Yes      |

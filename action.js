@@ -30,37 +30,38 @@ async function getJiraLabels(jiraTicket) {
 
 async function run() {
     try {
-        const githubToken = core.getInput('github-token');
-        const githubLabel = core.getInput('github-label');
-        const jiraComponents = core.getInput('jira-components');
-        const jiraLabel = core.getInput('jira-label');
+        const githubTokenInput = core.getInput('github-token');
+        const githubLabelsInputs = core.getInput('github-labels');
+        const jiraComponentsInput = core.getInput('jira-components');
+        const jiraLabelsInput = core.getInput('jira-label');
 
         // Check if either jira-label or jira-components is provided
-        if (!jiraLabel && !jiraComponents) {
+        if (!jiraLabelsInput && !jiraComponentsInput) {
             throw new Error('Either jira-label or jira-components must be provided.');
         }
 
-        core.debug(`GitHub Labels: ${githubLabel}`);
-        core.debug(`JIRA Labels: ${jiraLabel}`);
-        core.debug(`JIRA Components: ${jiraComponents}`);
+        core.debug(`GitHub Labels: ${githubLabelsInputs}`);
+        core.debug(`JIRA Labels: ${jiraLabelsInput}`);
+        core.debug(`JIRA Components: ${jiraComponentsInput}`);
 
-        const githubLabels = githubLabel.split(',').map(label => label.trim());
-        const jiraLabels = jiraLabel.split(',').map(label => label.trim());
-        const jiraComponentsList = jiraComponents !== '' ? jiraComponents.split(',').map(component => component.trim()) : [];
-
-        if (jiraLabel !== '' && (githubLabel.length !== jiraLabel.length)) {
+        if (githubLabelsInputs !== '' && (githubLabelsInputs.length !== jiraLabelsInput.length)) {
             throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
         }
 
-        if (jiraComponents !== '' && (githubLabel.length !== jiraComponents.length)) {
+        if (jiraComponentsInput !== '' && (githubLabelsInputs.length !== jiraComponentsInput.length)) {
             throw new Error('GitHub labels and JIRA components must have the same number of elements.');
         }
+
+        const githubLabels = githubLabelsInputs.split(',').map(label => label.trim());
+        const jiraLabels = jiraLabelsInput.split(',').map(label => label.trim());
+        const jiraComponentsList = jiraComponentsInput !== '' ? jiraComponentsInput.split(',').map(component => component.trim()) : [];
+
 
         core.debug(`GitHub Labels (Parsed): '${githubLabels}'`);
         core.debug(`JIRA Labels (Parsed): '${jiraLabels}'`);
         core.debug(`JIRA Components (Parsed): '${jiraComponentsList}'`);
 
-        const octokit = getOctokit(githubToken);
+        const octokit = getOctokit(githubTokenInput);
 
         // Get the owner and repo from the context
         const owner = context.repo.owner;

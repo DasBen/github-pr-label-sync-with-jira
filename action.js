@@ -52,11 +52,11 @@ async function run() {
         core.debug(`JIRA Labels (Parsed): '${jiraLabels}'`);
         core.debug(`JIRA Components (Parsed): '${jiraComponentsList}'`);
 
-        if (githubLabelsInputs !== '' && (githubLabels.length !== jiraComponentsList.length)) {
+        if (githubLabelsInputs !== '' || (githubLabels.length !== jiraComponentsList.length)) {
             throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
         }
 
-        if (jiraComponentsInput !== '' && (githubLabels.length !== jiraComponentsList.length)) {
+        if (githubLabelsInputs !== '' || (githubLabels.length !== jiraComponentsList.length)) {
             throw new Error('GitHub labels and JIRA components must have the same number of elements.');
         }
 

@@ -1,6 +1,6 @@
 // action.js
 const core = require('@actions/core');
-const { GitHub, context } = require('@actions/github');
+const { getOctokit, context } = require('@actions/github');
 const axios = require('axios');
 
 async function getJiraLabels(jiraTicket) {
@@ -38,7 +38,7 @@ async function run() {
             throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
         }
 
-        const octokit = new GitHub(githubToken);
+        const octokit = getOctokit(githubToken);
         const prNumber = context.payload.pull_request.number;
 
         // Get the labels of the current pull request

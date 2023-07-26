@@ -42,9 +42,9 @@ async function run() {
         const prNumber = context.payload.pull_request.number;
 
         // Get the labels of the current pull request
-        const prLabels = await octokit.issues.listLabelsOnIssue({
+        const { data: prLabels } = await octokit.pulls.listLabels({
             ...context.repo,
-            issue_number: prNumber,
+            pull_number: prNumber,
         });
 
         // Read all commits of the pull request and look for JIRA Tickets in the commit messages

@@ -7,10 +7,11 @@ async function getJiraLabels(jiraTicket) {
     const jiraApiUrl = core.getInput('jira-api-url');
     const jiraAuthTokenBase64 = core.getInput('jira-auth-token');
 
-    core.debug(`Fetching JIRA ticket ${jiraTicket} labels from ${jiraApiUrl}`);
+    core.debug(`Fetching JIRA Ticket Labels from '${jiraApiUrl}issue/${jiraTicket}'`);
 
     const response = await axios.get(
-        `${jiraApiUrl}issue/${jiraTicket}`,
+        // `${jiraApiUrl}issue/${jiraTicket}`,
+        `https://freenet-group.atlassian.net/rest/api/2/issue/${jiraTicket}`,
         {
             headers: {
                 Authorization: `Basic ${jiraAuthTokenBase64}`,
@@ -20,7 +21,7 @@ async function getJiraLabels(jiraTicket) {
 
     // Check if the response status is 200, otherwise throw an error
     if (response.status !== 200) {
-        throw new Error(`Failed to get labels for JIRA ticket ${jiraTicket}`);
+        throw new Error(`Failed to get labels for JIRA ticket '${jiraTicket}'`);
     }
 
     // Continue with the rest of the function
@@ -43,8 +44,8 @@ async function run() {
             throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
         }
 
-        core.debug(`GitHub Labels (Parsed): ${githubLabels}`);
-        core.debug(`JIRA Labels (Parsed): ${jiraLabels}`);
+        core.debug(`GitHub Labels (Parsed): '${githubLabels}'`);
+        core.debug(`JIRA Labels (Parsed): '${jiraLabels}'`);
 
         const octokit = getOctokit(githubToken);
 
@@ -52,13 +53,13 @@ async function run() {
         const owner = context.repo.owner;
         const repo = context.repo.repo;
         const prNumber = context.payload.pull_request.number;
-        core.debug(`Owner: ${owner}, Repo: ${repo}, Pull Request Number ${prNumber}`);
+        core.debug(`Owner:' ${owner}', Repo: '${repo}', Pull Request Number '${prNumber}'`);
 
         // Get the labels of the current pull request
         const pullRequest = await octokit.rest.pulls.get({owner, repo, pull_number: prNumber});
         const prLabels = pullRequest.data.labels.map((label) => label.name);
 
-        core.debug(`Current Pull Request Labels: ${prLabels}`);
+        core.debug(`Current Pull Request Labels: '${prLabels}'`);
 
         // Read all commits of the pull request and look for JIRA Tickets in the commit messages
         const commits = await octokit.rest.pulls.listCommits({
@@ -85,7 +86,6 @@ async function run() {
 
             // Fetch Jira labels for the current Jira ticket
             const jiraTicketLabels = await getJiraLabels(jiraTicket);
-
             core.debug(`JIRA Ticket Labels: ${jiraTicketLabels}`);
 
             for (let i = 0; i < jiraLabels.length; i++) {

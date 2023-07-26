@@ -5,13 +5,13 @@ inputs:
     description: 'GitHub token'
     required: true
   github-label:
-    description: 'Comma-separated list of github labels to watch'
+    description: 'Comma-separated list of github labels to add'
     required: true
   jira-label:
-    description: 'Comma-separated list of jira labels to watch'
+    description: 'Comma-separated list of jira labels to read'
     required: true
   jira-api-url:
-    description: 'The base URL of your JIRA API endpoint'
+    description: 'The base URL of your JIRA API endpoint. Set this as a secret in your repository. The Url must end on rest/api/2/'
     required: true
   jira-auth-token:
     description: 'Base64-encoded JIRA authentication token'

@@ -39,10 +39,14 @@ async function run() {
         }
 
         const octokit = getOctokit(githubToken);
+        // Get the owner and repo from the context
+        const owner = context.repo.owner;
+        const repo = context.repo.repo;
         const prNumber = context.payload.pull_request.number;
+        core.debug(`Owner: ${owner}, Repo: ${repo}, Pull Request Number ${prNumber}`);
 
         // Get the labels of the current pull request
-        const pullRequest = await octokit.rest.pulls.get({ owner, repo, pull_number: number });
+        const pullRequest = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
         const prLabels = pullRequest.data.labels.map((label) => label.name);
 
         // Read all commits of the pull request and look for JIRA Tickets in the commit messages

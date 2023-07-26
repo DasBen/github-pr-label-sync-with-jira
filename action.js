@@ -33,7 +33,7 @@ async function run() {
         const githubTokenInput = core.getInput('github-token');
         const githubLabelsInputs = core.getInput('github-labels');
         const jiraComponentsInput = core.getInput('jira-components');
-        const jiraLabelsInput = core.getInput('jira-label');
+        const jiraLabelsInput = core.getInput('jira-labels');
 
         // Check if either jira-label or jira-components is provided
         if (!jiraLabelsInput || !jiraComponentsInput) {

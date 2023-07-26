@@ -64,15 +64,11 @@ async function run() {
         core.debug(`GitHub Labels Type Length: '${typeof githubLabelList.length}'`)
         core.debug(`Jira Labels Type Length: '${typeof jiraLabelList.length}'`)
 
-        if (jiraLabelsInput !== '') {
-            throw new Error('jiraLabelsInput.');
-        }
-
-        if (githubLabelList.length !== jiraLabelList.length) {
+        if (!jiraLabelsInput || githubLabelList.length !== jiraLabelList.length) {
             throw new Error('githubLabelList.length !== jiraLabelList.length.');
         }
 
-        if (jiraComponentsInput !== '' || githubLabelList.length !== jiraComponentsList.length) {
+        if (!jiraComponentsInput || githubLabelList.length !== jiraComponentsList.length) {
             throw new Error('GitHub Labels and Jira Components must have the same number of elements.');
         }
 

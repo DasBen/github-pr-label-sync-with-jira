@@ -11,9 +11,7 @@ name: Sync Labels
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
+    types: [opened, synchronize, reopened]
 
 jobs:
   sync_labels:
@@ -24,10 +22,21 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         github-labels: label1, label2, label3
-        jira-labels: jira-ticket1, jira-ticket2, jira-ticket3
-        jira-components: component1, component2
+        jira-labels: jira-label1, jira-label2, jira-label3
         jira-api-endpoint: ${{ secrets.JIRA_API_ENDPOINT }}
         jira-auth-token: ${{ secrets.JIRA_AUTH_TOKEN_BASE64 }}
+        
+  sync_components:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync GitHub PR Labels with Jira Components
+        uses: DasBen/github-pr-label-sync-with-jira@<release-version>
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-labels: label1, label2,
+          jira-components: jira-component1, jira-component2
+          jira-api-endpoint: ${{ secrets.JIRA_API_ENDPOINT }}
+          jira-auth-token: ${{ secrets.JIRA_AUTH_TOKEN_BASE64 }}
 ```
 
 Make sure to replace your-username/your-repo-name with the actual repository name where your action is located.

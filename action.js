@@ -36,8 +36,8 @@ async function run() {
         const jiraLabelsInput = core.getInput('jira-label');
 
         // Check if either jira-label or jira-components is provided
-        if (!jiraLabelsInput && !jiraComponentsInput) {
-            throw new Error('Either jira-label or jira-components must be provided.');
+        if (!jiraLabelsInput || !jiraComponentsInput) {
+            throw new Error('Either jira-labels or jira-components must be provided.');
         }
 
         core.debug(`GitHub Labels: ${githubLabelsInputs}`);

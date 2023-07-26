@@ -40,24 +40,24 @@ async function run() {
             throw new Error('Either jira-labels or jira-components must be provided.');
         }
 
-        core.debug(`GitHub Labels: ${githubLabelsInputs}`);
-        core.debug(`JIRA Labels: ${jiraLabelsInput}`);
-        core.debug(`JIRA Components: ${jiraComponentsInput}`);
+        core.debug(`GitHub Labels: '${githubLabelsInputs}'`);
+        core.debug(`JIRA Labels: '${jiraLabelsInput}'`);
+        core.debug(`JIRA Components: '${jiraComponentsInput}'`);
 
         const githubLabels = githubLabelsInputs.split(',').map(label => label.trim());
-        const jiraLabels = jiraLabelsInput.split(',').map(label => label.trim());
+        const jiraLabelList = jiraLabelsInput.split(',').map(label => label.trim());
         const jiraComponentsList = jiraComponentsInput !== '' ? jiraComponentsInput.split(',').map(component => component.trim()) : [];
 
         core.debug(`GitHub Labels (Parsed): '${githubLabels}'`);
-        core.debug(`JIRA Labels (Parsed): '${jiraLabels}'`);
+        core.debug(`JIRA Labels (Parsed): '${jiraLabelList}'`);
         core.debug(`JIRA Components (Parsed): '${jiraComponentsList}'`);
 
-        if (githubLabelsInputs !== '' || (githubLabels.length !== jiraComponentsList.length)) {
-            throw new Error('GitHub labels and JIRA labels must have the same number of elements.');
+        if (githubLabelsInputs !== '' || (githubLabels.length !== jiraLabelList.length)) {
+            throw new Error('GitHub Labels and JIRA Labels must have the same number of elements.');
         }
 
         if (githubLabelsInputs !== '' || (githubLabels.length !== jiraComponentsList.length)) {
-            throw new Error('GitHub labels and JIRA components must have the same number of elements.');
+            throw new Error('GitHub Labels and JIRA Components must have the same number of elements.');
         }
 
         const octokit = getOctokit(githubTokenInput);
@@ -103,8 +103,8 @@ async function run() {
 
             // Check Jira Labels
             core.debug(`Checking JIRA Ticket vs Labels: ${jiraTicket}`);
-            for (let i = 0; i < jiraLabels.length; i++) {
-                const jiraLabel = jiraLabels[i];
+            for (let i = 0; i < jiraLabelList.length; i++) {
+                const jiraLabel = jiraLabelList[i];
                 const githubLabel = githubLabels[i];
 
                 // If Label is found from Input List
@@ -133,8 +133,8 @@ async function run() {
 
             // Check Jira Components
             core.debug(`Checking JIRA Ticket vs Components: ${jiraTicket}`);
-            for (let i = 0; i < jiraLabels.length; i++) {
-                const jiraComponent = jiraLabels[i];
+            for (let i = 0; i < jiraLabelList.length; i++) {
+                const jiraComponent = jiraLabelList[i];
                 const githubLabel = githubLabels[i];
                 if (jiraTicketLabels.includes(jiraComponent)) {
                     core.debug(`JIRA Ticket ${jiraTicket} has component ${jiraComponent}.`);

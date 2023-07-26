@@ -1,0 +1,19 @@
+{
+  "name": "github-pr-label-sync-with-jira",
+  "version": "0.1.0",
+  "description": "GitHub Action to sync Jira Labels to GitHub PR Labels",
+  "main": "action.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Benjamin 'DasBen' Pahl",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.1"
+  }
+}

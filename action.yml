@@ -1,0 +1,21 @@
+name: 'Sync Jira Labels with GitHub PR Labels'
+description: 'Sync Jira Labels with GitHub PR Labels'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  github-label:
+    description: 'Comma-separated list of github labels to watch'
+    required: true
+  jira-label:
+    description: 'Comma-separated list of jira labels to watch'
+    required: true
+  jira-api-endpoint:
+    description: 'The base URL of your JIRA API endpoint'
+    required: true
+  jira-auth-token:
+    description: 'Base64-encoded JIRA authentication token'
+    required: true
+runs:
+  using: 'node16'
+  main: 'action.js'

@@ -10,7 +10,7 @@ inputs:
   jira-label:
     description: 'Comma-separated list of jira labels to watch'
     required: true
-  jira-api-endpoint:
+  jira-api-url:
     description: 'The base URL of your JIRA API endpoint'
     required: true
   jira-auth-token:

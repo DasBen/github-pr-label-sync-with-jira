@@ -4,11 +4,11 @@ const { GitHub, context } = require('@actions/github');
 const axios = require('axios');
 
 async function getJiraLabels(jiraTicket) {
-    const jiraApiEndpoint = core.getInput('jira-api-endpoint');
+    const jiraApiUrl = core.getInput('jira-api-url');
     const jiraAuthTokenBase64 = core.getInput('jira-auth-token');
 
     const response = await axios.get(
-        `${jiraApiEndpoint}/rest/api/2/issue/${jiraTicket}`,
+        `${jiraApiUrl}/rest/api/2/issue/${jiraTicket}`,
         {
             headers: {
                 Authorization: `Basic ${jiraAuthTokenBase64}`,

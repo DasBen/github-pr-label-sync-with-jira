@@ -38,7 +38,7 @@ Make sure to replace your-username/your-repo-name with the actual repository nam
 | `github-label`      | Comma-separated list of GitHub labels to add.                                                                    | Yes      |
 | `jira-label`        | Comma-separated list of Jira labels to read.                                                                     | Yes      |
 | `jira-api-endpoint` | The base URL of your JIRA API endpoint. Set this as a secret in your repository. The Url must end on rest/api/2/ | Yes      |
-| `jira-auth-token`   | Base64-encoded JIRA authentication token. Set this as a secret in your repository.                               | Yes      |
+| `jira-auth-token`   | JIRA authentication token Pair with username:token. Set this as a secret in your repository.                     | Yes      |
 
 ## How It Works
 This GitHub Action reads the specified GitHub labels and Jira labels from the inputs. It then fetches the commit messages of the current pull request and extracts Jira ticket IDs from them using a regular expression. After extracting the Jira ticket IDs, it queries the Jira API to get the labels associated with those Jira tickets.

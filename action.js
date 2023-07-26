@@ -4,8 +4,9 @@ const {getOctokit, context} = require('@actions/github');
 const axios = require('axios');
 
 async function getJiraLabels(jiraTicket) {
-    const jiraApiUrl = core.getInput('jira-api-url');
-    const jiraAuthTokenBase64 = core.getInput('jira-auth-token');
+    const jiraApiUrl = core.getInput('jira-api-url')
+    const jiraAuthToken = core.getInput('jira-auth-token');
+    const jiraAuthTokenBase64 = Buffer.from(jiraAuthToken).toString('base64');
 
     core.debug(`Fetching JIRA Ticket Labels from '${jiraApiUrl}issue/${jiraTicket}'`);
 

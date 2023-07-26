@@ -50,7 +50,7 @@ async function run() {
         const prLabels = pullRequest.data.labels.map((label) => label.name);
 
         // Read all commits of the pull request and look for JIRA Tickets in the commit messages
-        const commits = await octokit.pulls.listCommits({
+        const commits = await octokit.rest.pulls.listCommits({
             ...context.repo,
             pull_number: prNumber,
         });
@@ -79,7 +79,7 @@ async function run() {
 
                     if (!labelExists) {
                         // Set the GitHub label
-                        await octokit.issues.addLabels({
+                        await octokit.rest.issues.addLabels({
                             ...context.repo,
                             issue_number: prNumber,
                             labels: [githubLabel],

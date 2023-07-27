@@ -69,13 +69,9 @@ async function run() {
         core.debug(`Jira Labels: '${jiraLabelsInput}'`);
         core.debug(`Jira Components: '${jiraComponentsInput}'`);
 
-        // const githubLabelList = githubLabelsInputs.split(',').map(label => label.trim());
-        // const jiraLabelList = jiraLabelsInput.split(',').map(label => label.trim());
-        // const jiraComponentsList = jiraComponentsInput.split(',').map(component => component.trim());
-
-        const githubLabelList = githubLabelsInputs.split(',');
-        const jiraLabelList = jiraLabelsInput.split(',');
-        const jiraComponentsList = jiraComponentsInput.split(',');
+        const githubLabelList = githubLabelsInputs.split(',').map(label => label.trim());
+        const jiraLabelList = jiraLabelsInput.split(',').map(label => label.trim());
+        const jiraComponentsList = jiraComponentsInput.split(',').map(component => component.trim());
 
         core.debug(`GitHub Labels (Parsed): '${githubLabelList}'`);
         core.debug(`Jira Labels (Parsed): '${jiraLabelList}'`);

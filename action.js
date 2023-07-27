@@ -179,9 +179,9 @@ async function run() {
                         core.debug(`Jira Ticket '${jiraTicket}' has component '${jiraComponent}'. Matching GitHub Label: '${githubLabel}'`);
 
                         // Check if the GitHub component is already present on the pull request
-                        const componentExists = prLabels.includes(jiraComponent);
+                        const labelExists = prLabels.includes(githubLabel);
 
-                        if (!componentExists) {
+                        if (!labelExists) {
                             core.debug(`Adding GitHub Component: ${githubLabel}`);
 
                             // Set the GitHub component

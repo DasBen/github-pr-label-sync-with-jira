@@ -71,7 +71,12 @@ async function run() {
 
         const githubLabelList = githubLabelsInputs.split(',').map(label => label.trim());
         const jiraLabelList = jiraLabelsInput.split(',').map(label => label.trim());
-        const jiraComponentsList = jiraComponentsInput.split(',').map(component => component.trim());
+        const jiraComponentsList = jiraComponentsInput.split(',').map(component => {
+            core.debug(`Jira Component (Before Trim): '${component}'`);
+            let trimmedComponent = component.trim();
+            core.debug(`Jira Component (Trimmed): '${trimmedComponent}'`);
+            return trimmedComponent;
+        });
 
         core.debug(`GitHub Labels (Parsed): '${githubLabelList}'`);
         core.debug(`Jira Labels (Parsed): '${jiraLabelList}'`);
@@ -91,7 +96,7 @@ async function run() {
         const owner = context.repo.owner;
         const repo = context.repo.repo;
         const prNumber = context.payload.pull_request.number;
-        core.debug(`Owner:' ${owner}', Repo: '${repo}', Pull Request Number '${prNumber}'`);
+        core.debug(`Owner: '${owner}', Repo: '${repo}', Pull Request Number '${prNumber}'`);
 
         // Get the labels of the current pull request
         const pullRequest = await octokit.rest.pulls.get({owner, repo, pull_number: prNumber});
@@ -135,7 +140,7 @@ async function run() {
                     const githubLabel = githubLabelList[i];
 
                     if (jiraTicketLabels.includes(jiraLabel)) {
-                        core.debug(`Jira Ticket '${jiraTicket}' has label '${jiraLabel}'. Matching GitHub Label: ${githubLabel}`);
+                        core.debug(`Jira Ticket '${jiraTicket}' has label '${jiraLabel}'. Matching GitHub Label: '${githubLabel}'`);
 
                         // Check if the GitHub label is already present on the pull request
                         const labelExists = prLabels.includes(githubLabel);
@@ -171,7 +176,7 @@ async function run() {
                     const githubLabel = githubLabelList[i];
 
                     if (jiraTicketComponents.includes(jiraComponent)) {
-                        core.debug(`Jira Ticket '${jiraTicket}' has component '${jiraComponent}'. Matching GitHub Label: ${githubLabel}`);
+                        core.debug(`Jira Ticket '${jiraTicket}' has component '${jiraComponent}'. Matching GitHub Label: '${githubLabel}'`);
 
                         // Check if the GitHub component is already present on the pull request
                         const componentExists = prLabels.includes(jiraComponent);

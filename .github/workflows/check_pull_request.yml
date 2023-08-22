@@ -6,8 +6,7 @@ on:
     types: [opened, reopened, labeled, unlabeled]
 
 jobs:
-  labels:
-    needs: syncLabels
+  check_labels:
     runs-on: ubuntu-latest
     permissions:
       issues: write

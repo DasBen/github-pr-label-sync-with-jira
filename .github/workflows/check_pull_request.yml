@@ -7,7 +7,6 @@ on:
 
 jobs:
   check_labels:
-    needs: syncLabels
     runs-on: ubuntu-latest
     permissions:
       issues: write
